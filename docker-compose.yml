@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  vuln-scanner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: kali-port-vuln-scanner:latest
+    container_name: vuln-scanner
+    
+    # Network mode: host allows scanning of local network
+    # Use with caution - provides full network access
+    network_mode: host
+    
+    # Volumes
+    volumes:
+      # Mount reports directory
+      - ./reports:/scanner/reports
+      
+      # Optional: Mount custom targets file
+      - ./examples/targets.txt:/scanner/targets.txt:ro
+    
+    # Environment variables
+    environment:
+      # Optional: Set Vulners API key
+      - VULNERS_API_KEY=${VULNERS_API_KEY:-}
+      
+      # Scanner configuration
+      - SCANNER_OUTPUT_DIR=/scanner/reports
+    
+    # Capabilities (required for raw socket access)
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    
+    # Resource limits (optional)
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 512M
+    
+    # Restart policy
+    restart: "no"
+    
+    # Command (override with docker-compose run)
+    # command: --target 192.168.1.10 --fast
+
+# Optional: Separate network for isolation
+# networks:
+#   scanner-net:
+#     driver: bridge
+
+# Example usage:
+# 
+# Build:
+#   docker-compose build
+#
+# Run scan:
+#   docker-compose run --rm vuln-scanner --target 192.168.1.10
+#
+# Run with custom options:
+#   docker-compose run --rm vuln-scanner --target 192.168.1.10 --fast --ports 80,443
+#
+# Run with targets file:
+#   docker-compose run --rm vuln-scanner --target /scanner/targets.txt

@@ -1,0 +1,19 @@
+# Sample targets file for kali-port-vuln-scanner
+# One target per line
+# Supports: IP addresses, hostnames, CIDR ranges
+# Lines starting with # are comments
+
+# Local testing
+127.0.0.1
+localhost
+
+# Example single IPs
+# 192.168.1.10
+# 192.168.1.20
+
+# Example hostname
+# web-server.example.com
+
+# Example CIDR range
+# 192.168.1.0/24
+# 10.0.0.0/24
